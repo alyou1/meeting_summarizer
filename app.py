@@ -6,7 +6,8 @@ from stt import transcribe
 from llm import call_ollama
 from components.display import render_summary
 from export import transcript_to_txt, transcript_to_docx, summary_to_txt, summary_to_docx
-from recorder import AudioRecorder, list_input_devices
+#from recorder import AudioRecorder, list_input_devices
+from audio_capture import DualAudioRecorder
 
 st.set_page_config(page_title="Meeting Summarizer", layout="wide")
 st.title("Meeting Summarizer")
@@ -82,14 +83,14 @@ with tab_record:
         )
         selected_device_index = device_indices[selected_idx]
 
-        recorder: AudioRecorder = st.session_state.get("recorder")
+        recorder: DualAudioRecorder = st.session_state.get("recorder")
         is_recording = recorder is not None and recorder.is_recording
 
         col_start, col_stop, col_status = st.columns([1, 1, 4])
 
         with col_start:
             if st.button("Demarrer", disabled=is_recording, type="primary"):
-                rec = AudioRecorder(device_index=selected_device_index, samplerate=16000)
+                rec = DualAudioRecorder(samplerate=16000)
                 rec.start()
                 st.session_state["recorder"] = rec
                 st.session_state["audio_bytes"] = None
